@@ -35,10 +35,22 @@ c1, c2 = st.columns(2)
 with c1:
     st.subheader("Churn by Geography")
     geo_churn = df.groupby('Geography')['Exited'].mean().reset_index()
+    
+    # 1. Multiply by 100 to show as percentage
+    geo_churn['Exited'] = geo_churn['Exited'] * 100 
+    
     fig_geo = px.bar(geo_churn, x='Geography', y='Exited', 
-                     title="Churn Probability per Region",
-                     labels={'Exited': 'Churn Rate'},
+                     title="Churn Probability per Region (%)",
+                     text_auto='.2f',  # Shows 2 decimal places on the bar
+                     labels={'Exited': 'Churn Rate (%)'},
                      color_discrete_sequence=['#ff4b4b'])
+    
+    # 2. Force labels to sit ON TOP of the bars for clarity
+    fig_geo.update_traces(textposition='outside', cliponaxis=False)
+    
+    # 3. Improve the hover tooltip detail
+    fig_geo.update_layout(hovermode="x unified")
+    
     st.plotly_chart(fig_geo, use_container_width=True)
 
 with c2:
