@@ -92,7 +92,7 @@ fig_geo.update_layout(
 
 st.plotly_chart(fig_geo, use_container_width=True)
 # 🔥 2. Balance Distribution (Business-Friendly)
-with c2:
+with col2:
     st.subheader("Balance Distribution vs Churn")
 
     fig_balance = px.histogram(
