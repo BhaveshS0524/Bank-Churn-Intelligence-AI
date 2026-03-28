@@ -281,6 +281,53 @@ if user_query:
         except:
             st.error("AI service unavailable")
 
+st.write(response.text)
+
+from docx import Document
+from io import BytesIO
+
+def create_docx(report_text):
+    doc = Document()
+    
+    doc.add_heading("Customer Churn Intelligence Report", 0)
+    
+    doc.add_paragraph(report_text)
+    
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    
+    return buffer
+
+docx_file = create_docx(response.text)
+
+st.download_button(
+    label="📄 Download Report (.docx)",
+    data=docx_file,
+    file_name="churn_intelligence_report.docx",
+    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+)
+
+st.markdown("### 📥 Export Report")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.download_button(
+        "Download as TXT",
+        response.text,
+        file_name="report.txt"
+    )
+
+with col2:
+    st.download_button(
+        "Download as DOCX",
+        docx_file,
+        file_name="report.docx"
+    )
+doc.add_heading("Key Insights", level=1)
+doc.add_heading("Retention Strategy", level=1)
+
 # ---------------- SIDEBAR INPUT ----------------
 st.sidebar.header("🔍 Customer 360 Analysis")
 
