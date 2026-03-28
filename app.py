@@ -255,7 +255,7 @@ user_query = st.text_input("Ask a business question about the data (e.g., 'How t
 
 if user_query:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     
     prompt = f"Context: Churn is {df['Exited'].mean()*100:.2f}%. Question: {user_query}"
 
