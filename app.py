@@ -190,6 +190,57 @@ st.dataframe(
 )
 
 # 3. Ask AI
+
+st.divider()
+st.header("❓ Frequently Asked Questions (Ask AI)")
+
+# ---------- BUSINESS INSIGHTS ----------
+with st.expander("📊 Business Insights"):
+    st.markdown("""
+- Which customers are most likely to churn and why?
+- What are the main drivers of churn in this dataset?
+- Which geography has the highest churn risk and what could be the reason?
+- What trends do you observe in customer churn behavior?
+""")
+
+# ---------- REVENUE & RISK ----------
+with st.expander("💰 Revenue & Risk Analysis"):
+    st.markdown("""
+- What is the estimated revenue at risk due to churn?
+- Which customer segment contributes the most to revenue loss?
+- How can the bank reduce financial impact from churn?
+- Which high-value customers should be prioritized for retention?
+""")
+
+# ---------- RETENTION STRATEGY ----------
+with st.expander("🎯 Retention Strategy"):
+    st.markdown("""
+- What retention strategies should be applied to high-risk customers?
+- Suggest personalized offers to retain premium customers
+- How can we improve engagement for inactive users?
+- What actions should be taken immediately to reduce churn?
+""")
+
+# ---------- DATA ANALYSIS ----------
+with st.expander("📈 Data Analysis & Patterns"):
+    st.markdown("""
+- What is the relationship between balance and churn?
+- How does customer activity impact churn?
+- Which age group has the highest churn rate?
+- Does the number of products affect retention?
+""")
+
+# ---------- SCENARIO ANALYSIS ----------
+with st.expander("🔮 Scenario Analysis"):
+    st.markdown("""
+- What will happen if customer engagement increases by 20%?
+- How would reducing churn by 5% impact revenue?
+- What if high-balance customers become inactive?
+""")
+
+# ---------- USER GUIDANCE ----------
+st.info("💡 Tip: Ask business-focused questions like 'How can we reduce churn?' for better AI insights.")
+
 st.subheader("🧠 Ask AI About Customer Data")
 # st.subheader("🧠 Ask AI About Customer Data")
 
