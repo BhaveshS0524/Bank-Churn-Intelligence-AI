@@ -3,18 +3,39 @@ import pandas as pd
 import plotly.express as px
 import google.generativeai as genai
 import plotly.io as pio
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from io import BytesIO
-from docx import Document
 from reportlab.lib.pagesizes import letter
+from io import BytesIO
 import re
 
-# ---------------- CONFIG & THEME ----------------
-st.set_page_config(page_title="BFSI Churn Intelligence", layout="wide")
-pio.templates.default = "plotly_white"
+# ---------------- 1. FUNCTIONS FIRST (Prevents Indentation Errors) ----------------
+def create_pdf(report_text):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    body_style = styles["Normal"]
+    body_style.leading = 14 
 
-   
+    content = []
+    content.append(Paragraph("<b>BFSI Strategic Retention Report</b>", styles["Title"]))
+    content.append(Spacer(1, 20))
+
+    paragraphs = report_text.split('\n')
+    for p in paragraphs:
+        if p.strip():
+            # Convert **bold** to <b>bold</b>
+            clean_p = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', p)
+            content.append(Paragraph(clean_p, body_style))
+            content.append(Spacer(1, 8))
+
+    doc.build(content)
+    buffer.seek(0)
+    return buffer
+
+# ---------------- 2. SETUP & DATA ----------------
+st.set_page_config(page_title="BFSI Churn Intelligence", layout="wide")
+pio.templates.default = "plotly_white"   
 
 # ---------------- HELPER FUNCTIONS (UTILITIES) ----------------
 def create_enterprise_docx(report_text, user_query):
@@ -160,64 +181,36 @@ st.divider()
 st.header("🧠 AI Decision Intelligence Layer")
 user_query = st.text_input("Ask a business question about the data (e.g., 'How to reduce churn in Germany?'):")
 
-# ---------------- ASK AI SECTION ----------------
+# ---------------- 4. ASK AI (THE KEY FIX) ----------------
+st.header("🧠 AI Decision Intelligence Layer")
+user_query = st.text_input("Ask a business question:")
+
 if user_query:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     model = genai.GenerativeModel("gemini-2.5-flash")
     
-    # Context for the AI
-    summary = f"Total Customers: {len(df)}, Churn Rate: {round(df['Exited'].mean()*100,2)}%"
-    prompt = f"System: Senior Banking Analyst. Context: {summary}. Question: {user_query}."
+    prompt = f"Context: Churn is {df['Exited'].mean()*100:.2f}%. Question: {user_query}"
 
     with st.spinner("Analyzing..."):
         try:
+            # All code inside 'try' must be indented exactly the same
             response = model.generate_content(prompt)
-            report_text = response.text  # Save the text to a variable first
+            report_text = response.text
             
             st.markdown("### 🤖 AI Insight")
             st.write(report_text)
             
-            st.divider()
-            st.subheader("📥 Export Strategic Report")
+            # PDF Generation
+            pdf_data = create_pdf(report_text)
             
-def create_pdf(report_text):
-
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
-    styles = getSampleStyleSheet()
-    
-    # Custom body style for better spacing
-    body_style = styles["Normal"]
-    body_style.leading = 14 
-
-    content = []
-    content.append(Paragraph("<b>BFSI Strategic Retention Report</b>", styles["Title"]))
-    content.append(Spacer(1, 20))
-
-    # Split text into paragraphs so it's not one big block
-    paragraphs = report_text.split('\n')
-    for p in paragraphs:
-        if p.strip():
-            # Convert Gemini's **bold** to PDF <b>bold</b>
-            clean_p = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', p)
-            content.append(Paragraph(clean_p, body_style))
-            content.append(Spacer(1, 8))
-
-    doc.build(content)
-    buffer.seek(0)
-    return buffer
-            
-
-            # The Download Button
             st.download_button(
-                label="📕 Download PDF Report",
+                label="📕 Download Formatted PDF",
                 data=pdf_data,
-                file_name="BFSI_Churn_Analysis.pdf",
+                file_name="BFSI_Report.pdf",
                 mime="application/pdf"
             )
-            
         except Exception as e:
-            st.error(f"AI service unavailable: {e}")
+            st.error(f"AI Error: {e}")            
 
 # ---------------- SIDEBAR: INDIVIDUAL 360 ANALYSIS ----------------
 st.sidebar.header("🔍 Customer 360 Analysis")
