@@ -121,3 +121,15 @@ if predict_btn:
 st.divider()
 st.subheader("🤖 AI Risk Assessment")
 st.info("In the next update, we will integrate Gemini 3 to generate personalized retention offers for these customers.")
+
+# --- STEP 6: PORTFOLIO & SOCIAL SHARING ---
+st.sidebar.divider()
+st.sidebar.subheader("📢 Share this Insight")
+st.sidebar.info("Found an interesting risk profile? Share this tool with your network.")
+
+# Replace with your actual LinkedIn profile link
+linkedin_url = "https://www.linkedin.com/in/YOUR_PROFILE_NAME" 
+st.sidebar.link_button("🤝 Connect with the Developer", linkedin_url)
+
+# Add a "Copy Link" helper
+st.sidebar.code(f"App Link: {st.secrets.get('APP_URL', 'bank-churn-intelligence-bhavesh.streamlit.app')}")
