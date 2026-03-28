@@ -49,7 +49,7 @@ streamlit run app.py
 
 **Scalability:** The architecture is designed to handle enterprise-level datasets with minimal latency thanks to the Flash 2.5 model.
 
-**Developed by Bhavesh | Connect on [LinkedIn](https://www.linkedin.com/in/bhaveshsuryavanshi/)**
+**Developed by Bhavesh Suryavanshi | Connect on [LinkedIn](https://www.linkedin.com/in/bhaveshsuryavanshi/)**
 
 ## ⚡ Quick Start
 1. **Clone the repository:**
