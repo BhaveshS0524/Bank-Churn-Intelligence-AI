@@ -235,7 +235,7 @@ st.sidebar.subheader("📢 Share this Insight")
 st.sidebar.info("Found an interesting risk profile? Share this tool with your network.")
 
 # Replace with your actual LinkedIn profile link
-linkedin_url = "https://www.linkedin.com/in/YOUR_PROFILE_NAME" 
+linkedin_url = "https://www.linkedin.com/in/bhaveshsuryavanshi/" 
 st.sidebar.link_button("🤝 Connect with the Developer", linkedin_url)
 
 # Add a "Copy Link" helper
