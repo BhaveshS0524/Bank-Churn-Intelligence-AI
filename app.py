@@ -199,7 +199,56 @@ if st.sidebar.button("🚀 Analyze Individual Risk"):
     with st.spinner("Generating strategy..."):
         res = ind_model.generate_content(ind_prompt)
         st.write(res.text)
+st.write(response.text)
+def create_enterprise_docx(report_text, user_query):
+    doc = Document()
 
+    # Title
+    doc.add_heading("BFSI Customer Churn Intelligence Report", 0)
+
+    # Subtitle
+    doc.add_paragraph("AI-Powered Strategic Analysis for Banking Decision Makers\n")
+
+    # Query
+    doc.add_heading("User Query", level=1)
+    doc.add_paragraph(user_query)
+
+    # AI Insights
+    doc.add_heading("AI-Generated Insights", level=1)
+    doc.add_paragraph(report_text)
+
+    # Recommendations section
+    doc.add_heading("Recommended Actions", level=1)
+    doc.add_paragraph(
+        "- Prioritize high-value customers\n"
+        "- Improve engagement strategies\n"
+        "- Monitor churn-prone segments"
+    )
+
+    # Footer
+    doc.add_paragraph("\nGenerated using AI Churn Intelligence Platform")
+
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+
+    return buffer
+
+def create_pdf(report_text):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer)
+    styles = getSampleStyleSheet()
+
+    content = []
+
+    content.append(Paragraph("BFSI Customer Churn Intelligence Report", styles["Title"]))
+    content.append(Paragraph("<br/>", styles["Normal"]))
+    content.append(Paragraph(report_text, styles["Normal"]))
+
+    doc.build(content)
+    buffer.seek(0)
+
+    return buffer
 # ---------------- FOOTER & SOCIALS ----------------
 st.sidebar.divider()
 st.sidebar.link_button("🤝 Connect with Developer", "https://www.linkedin.com/in/bhaveshsuryavanshi/")
