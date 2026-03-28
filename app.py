@@ -167,7 +167,15 @@ if user_query:
         try:
             response = model.generate_content(prompt)
             st.markdown("### 🤖 AI Insight")
-           
+            st.write(response.text)
+            
+            # Export Section
+            c1, c2, c3 = st.columns(3)
+            with c1: st.download_button("📄 DOCX", create_enterprise_docx(response.text, user_query), "BFSI_Report.docx")
+            with c2: st.download_button("📕 PDF", create_pdf(response.text), "BFSI_Report.pdf")
+            with c3: st.download_button("📄 TXT", response.text, "BFSI_Report.txt")
+        except Exception as e:
+            st.error(f"AI error: {e}")
 
 # ---------------- SIDEBAR: INDIVIDUAL 360 ANALYSIS ----------------
 st.sidebar.header("🔍 Customer 360 Analysis")
@@ -192,37 +200,6 @@ if st.sidebar.button("🚀 Analyze Individual Risk"):
         res = ind_model.generate_content(ind_prompt)
         st.write(res.text)
 
-# ---------------- EXPORT SECTION ----------------
-
-st.markdown("### 📥 Export Enterprise Report")
-
-docx_file = create_enterprise_docx(response.text, user_query)
-pdf_file = create_pdf(response.text)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.download_button(
-        "📄 Download DOCX",
-        docx_file,
-        file_name="BFSI_Churn_Report.docx",
-        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
-
-with col2:
-    st.download_button(
-        "📕 Download PDF",
-        pdf_file,
-        file_name="BFSI_Churn_Report.pdf",
-        mime="application/pdf"
-    )
-
-with col3:
-    st.download_button(
-        "📄 Download TXT",
-        response.text,
-        file_name="BFSI_Report.txt"
-    )
 # ---------------- FOOTER & SOCIALS ----------------
 st.sidebar.divider()
 st.sidebar.link_button("🤝 Connect with Developer", "https://www.linkedin.com/in/bhaveshsuryavanshi/")
