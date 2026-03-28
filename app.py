@@ -58,22 +58,70 @@ fig_seg = px.pie(seg_counts, names="Segment", values="count",
 st.plotly_chart(fig_seg, use_container_width=True)
 
 # ---------------- VISUALS ----------------
-col1, col2 = st.columns(2)
+# --- STEP 3: VISUAL ANALYSIS (UPGRADED) ---
+st.divider()
+c1, c2 = st.columns(2)
 
-with col1:
+# 🔥 1. Churn by Geography (Improved)
+with c1:
+    st.subheader("Churn by Geography")
+
     geo = df.groupby("Geography")["Exited"].mean().reset_index()
     geo["Exited"] *= 100
-    fig_geo = px.bar(geo, x="Geography", y="Exited",
-                     title="Churn Rate by Geography (%)",
-                     color_discrete_sequence=["red"])
+    geo = geo.sort_values(by="Exited", ascending=True)
+
+    fig_geo = px.bar(
+        geo,
+        x="Exited",
+        y="Geography",
+        orientation="h",
+        text=geo["Exited"].round(2),
+        title="Churn Rate by Geography (%)"
+    )
+
+    fig_geo.update_traces(textposition="outside")
+
+    fig_geo.update_layout(
+        xaxis_title="Churn Rate (%)",
+        yaxis_title="",
+    )
+
     st.plotly_chart(fig_geo, use_container_width=True)
 
-with col2:
-    fig_balance = px.box(df, x="Exited", y="Balance",
-                         color="Exited",
-                         title="Balance vs Churn")
+# 🔥 2. Balance Distribution (Business-Friendly)
+with c2:
+    st.subheader("Balance Distribution vs Churn")
+
+    fig_balance = px.histogram(
+        df,
+        x="Balance",
+        color="Exited",
+        nbins=50,
+        barmode="overlay",
+        title="Balance Distribution (Churn vs Retained)"
+    )
+
+    fig_balance.update_layout(
+        xaxis_title="Account Balance",
+        yaxis_title="Customer Count"
+    )
+
     st.plotly_chart(fig_balance, use_container_width=True)
 
+# 🔥 3. Customer Segmentation (Donut Chart)
+st.subheader("Customer Segmentation")
+
+fig_seg = px.pie(
+    seg_counts,
+    names="Segment",
+    values="count",
+    hole=0.5,
+    title="Customer Segments"
+)
+
+fig_seg.update_traces(textinfo="percent+label")
+
+st.plotly_chart(fig_seg, use_container_width=True)
 # ---------------- TOP RISK CUSTOMERS ----------------
 st.subheader("⚠️ High Revenue Risk Customers")
 
