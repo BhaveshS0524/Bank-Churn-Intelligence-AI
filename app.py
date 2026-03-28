@@ -94,7 +94,7 @@ if predict_btn:
     
     # Configure Gemini
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    model = genai.GenerativeModel('gemini-1.5-flash') # Using the stable flash model
+    model = genai.GenerativeModel('gemini-2.5-flash') # Using the stable flash model
     
     prompt = f"""
     You are a Senior Retention Manager at a global bank. 
