@@ -291,40 +291,80 @@ if user_query:
             # ---------------- DOWNLOAD SECTION ----------------
             
 
-            def create_docx(report_text):
-                doc = Document()
-                doc.add_heading("Customer Churn Intelligence Report", 0)
-                doc.add_paragraph(report_text)
+            with st.spinner("Generating AI strategy..."):
+    try:
+        response = model.generate_content(prompt)
 
-                buffer = BytesIO()
-                doc.save(buffer)
-                buffer.seek(0)
-                return buffer
+        # ✅ SHOW OUTPUT
+        st.markdown("### 🤖 AI Retention Strategy")
+        st.write(response.text)
 
-            docx_file = create_docx(response.text)
+        # ✅ IMPORTS MUST BE INSIDE OR AT TOP
+        from docx import Document
+        from io import BytesIO
+        from reportlab.platypus import SimpleDocTemplate, Paragraph
+        from reportlab.lib.styles import getSampleStyleSheet
 
-            st.markdown("### 📥 Export Report")
+        # ---------------- DOCX FUNCTION ----------------
+        def create_docx(report_text):
+            doc = Document()
+            doc.add_heading("Customer Churn Intelligence Report", 0)
+            doc.add_paragraph(report_text)
 
-            col1, col2 = st.columns(2)
+            buffer = BytesIO()
+            doc.save(buffer)
+            buffer.seek(0)
+            return buffer
 
-            with col1:
-                st.download_button(
-                    "📄 Download TXT",
-                    response.text,
-                    file_name="churn_report.txt",
-                    mime="text/plain"
-                )
+        # ---------------- PDF FUNCTION ----------------
+        def create_pdf(report_text):
+            buffer = BytesIO()
+            doc = SimpleDocTemplate(buffer)
+            styles = getSampleStyleSheet()
 
-            with col2:
-                st.download_button(
-                    "📄 Download DOCX",
-                    docx_file,
-                    file_name="churn_report.docx",
-                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                )
+            content = []
+            content.append(Paragraph("Customer Churn Intelligence Report", styles["Title"]))
+            content.append(Paragraph("<br/>", styles["Normal"]))
+            content.append(Paragraph(report_text, styles["Normal"]))
 
-        except:
-            st.error("AI service unavailable")
+            doc.build(content)
+            buffer.seek(0)
+            return buffer
+
+        # ✅ GENERATE FILES
+        docx_file = create_docx(response.text)
+        pdf_file = create_pdf(response.text)
+
+        # ---------------- DOWNLOAD BUTTONS ----------------
+        st.markdown("### 📥 Export Report")
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.download_button(
+                "📄 DOCX",
+                docx_file,
+                file_name="customer_strategy.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
+
+        with col2:
+            st.download_button(
+                "📕 PDF",
+                pdf_file,
+                file_name="customer_strategy.pdf",
+                mime="application/pdf"
+            )
+
+        with col3:
+            st.download_button(
+                "📄 TXT",
+                response.text,
+                file_name="customer_strategy.txt"
+            )
+
+    except Exception as e:
+        st.error(f"AI service unavailable: {e}")
 
 # ---------------- SIDEBAR INPUT ----------------
 st.sidebar.header("🔍 Customer 360 Analysis")
