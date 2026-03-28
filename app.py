@@ -177,7 +177,52 @@ if user_query:
             st.subheader("📥 Export Strategic Report")
             
             # Create the PDF in memory
-            pdf_data = create_pdf(report_text)
+           def create_pdf(report_text):
+    from reportlab.lib.pagesizes import letter
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from io import BytesIO
+    import re
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    
+    # Custom styles for better readability
+    title_style = styles["Title"]
+    body_style = styles["Normal"]
+    body_style.leading = 14  # Increases line spacing
+    body_style.fontSize = 11
+
+    content = []
+    
+    # 1. Add Title
+    content.append(Paragraph("<b>BFSI Strategic Retention Report</b>", title_style))
+    content.append(Spacer(1, 24)) # Add 24pt space after title
+
+    # 2. Process AI text into clean paragraphs
+    # Split text into lines to identify headers and bullet points
+    lines = report_text.split('\n')
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
+            # Add a small vertical space for empty lines
+            content.append(Spacer(1, 10))
+            continue
+            
+        # Convert Markdown Bold (**) to PDF Bold (<b>)
+        # Note: ReportLab uses <b>...</b> for bolding
+        formatted_line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line)
+        formatted_line = re.sub(r'#(.*)', r'<b>\1</b>', formatted_line) # Simple header fix
+
+        # Add the line as a new paragraph
+        content.append(Paragraph(formatted_line, body_style))
+        content.append(Spacer(1, 6)) # 6pt space between every line
+
+    doc.build(content)
+    buffer.seek(0)
+    return buffer
             
             # The Download Button
             st.download_button(
