@@ -249,6 +249,38 @@ def create_pdf(report_text):
     buffer.seek(0)
 
     return buffer
+
+# ---------------- EXPORT SECTION ----------------
+
+st.markdown("### 📥 Export Enterprise Report")
+
+docx_file = create_enterprise_docx(response.text, user_query)
+pdf_file = create_pdf(response.text)
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.download_button(
+        "📄 Download DOCX",
+        docx_file,
+        file_name="BFSI_Churn_Report.docx",
+        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+
+with col2:
+    st.download_button(
+        "📕 Download PDF",
+        pdf_file,
+        file_name="BFSI_Churn_Report.pdf",
+        mime="application/pdf"
+    )
+
+with col3:
+    st.download_button(
+        "📄 Download TXT",
+        response.text,
+        file_name="BFSI_Report.txt"
+    )
 # ---------------- FOOTER & SOCIALS ----------------
 st.sidebar.divider()
 st.sidebar.link_button("🤝 Connect with Developer", "https://www.linkedin.com/in/bhaveshsuryavanshi/")
