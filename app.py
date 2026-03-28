@@ -181,10 +181,6 @@ st.divider()
 st.header("🧠 AI Decision Intelligence Layer")
 user_query = st.text_input("Ask a business question about the data (e.g., 'How to reduce churn in Germany?'):")
 
-# ---------------- 4. ASK AI (THE KEY FIX) ----------------
-st.header("🧠 AI Decision Intelligence Layer")
-user_query = st.text_input("Ask a business question:")
-
 if user_query:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     model = genai.GenerativeModel("gemini-2.5-flash")
