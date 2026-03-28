@@ -91,25 +91,34 @@ fig_geo.update_layout(
 )
 
 st.plotly_chart(fig_geo, use_container_width=True)
+
 # 🔥 2. Balance Distribution (Business-Friendly)
 with col2:
     st.subheader("Balance Distribution vs Churn")
 
     fig_balance = px.histogram(
-        df,
-        x="Balance",
-        color="Exited",
-        nbins=50,
-        barmode="overlay",
-        title="Balance Distribution (Churn vs Retained)"
-    )
+    df,
+    x="Balance",
+    color="Exited",
+    nbins=40,
+    barmode="overlay",
+    opacity=0.7,
+    color_discrete_map={
+        0: "#2ecc71",  # green
+        1: "#e74c3c"   # red
+    }
+)
 
-    fig_balance.update_layout(
-        xaxis_title="Account Balance",
-        yaxis_title="Customer Count"
-    )
+fig_balance.update_layout(
+    title="Customer Balance Distribution (Churn vs Retained)",
+    xaxis_title="Balance",
+    yaxis_title="Customer Count",
+    plot_bgcolor="white",
+    paper_bgcolor="white",
+    font=dict(size=14)
+)
 
-    st.plotly_chart(fig_balance, use_container_width=True)
+st.plotly_chart(fig_balance, use_container_width=True)
 
 # 🔥 3. Customer Segmentation (Donut Chart)
 st.subheader("Customer Segmentation")
@@ -118,11 +127,19 @@ fig_seg = px.pie(
     seg_counts,
     names="Segment",
     values="count",
-    hole=0.5,
-    title="Customer Segments"
+    hole=0.55,
+    color_discrete_sequence=px.colors.qualitative.Bold
 )
 
-fig_seg.update_traces(textinfo="percent+label")
+fig_seg.update_traces(
+    textinfo="percent+label",
+    textfont_size=13
+)
+
+fig_seg.update_layout(
+    title="Customer Segmentation",
+    showlegend=True
+)
 
 st.plotly_chart(fig_seg, use_container_width=True)
 # ---------------- TOP RISK CUSTOMERS ----------------
