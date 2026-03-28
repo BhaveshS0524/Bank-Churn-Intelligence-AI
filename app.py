@@ -3,6 +3,12 @@ import pandas as pd
 import plotly.express as px
 import google.generativeai as genai
 import plotly.io as pio
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from io import BytesIO
+from docx import Document
+from io import BytesIO
+
 
 pio.templates.default = "plotly_white"
 
@@ -283,8 +289,7 @@ if user_query:
             st.write(response.text)
 
             # ---------------- DOWNLOAD SECTION ----------------
-            from docx import Document
-            from io import BytesIO
+            
 
             def create_docx(report_text):
                 doc = Document()
@@ -468,9 +473,6 @@ def create_enterprise_docx(report_text, user_query):
 
     return buffer
 
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
-from io import BytesIO
 
 def create_pdf(report_text):
     buffer = BytesIO()
