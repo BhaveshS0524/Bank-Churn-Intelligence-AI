@@ -35,4 +35,4 @@ By integrating **Gemini 2.5 Flash**, the system analyzes 10,000+ customer record
 ## ⚡ Quick Start
 1. **Clone the repository:**
    ```bash
-git clone [https://github.com/BhaveshS0524/bank-churn-intelligence-ai.git](https://github.com/BhaveshS0524/bank-churn-intelligence-ai.git)
+git clone [https://github.com/BhaveshS0524/bank-churn-intelligence-ai.git] (https://github.com/BhaveshS0524/bank-churn-intelligence-ai.git)
