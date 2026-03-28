@@ -72,22 +72,23 @@ fig_geo = px.bar(
     orientation="h",
     text=geo["Exited"].round(1),
     color="Exited",
-    color_continuous_scale="Reds"
+    color_continuous_scale=[
+        "#fde0dd", "#fa9fb5", "#c51b8a", "#7a0177"
+    ]
 )
 
 fig_geo.update_traces(
     textposition="outside",
-    textfont_size=14
+    textfont=dict(size=14, color="black"),
+    cliponaxis=False   # 🔥 KEY FIX
 )
 
 fig_geo.update_layout(
     title="Churn Rate by Geography (%)",
     xaxis_title="Churn Rate (%)",
     yaxis_title="",
-    plot_bgcolor="white",
-    paper_bgcolor="white",
     font=dict(size=14),
-    margin=dict(l=40, r=40, t=60, b=40)
+    margin=dict(l=40, r=80, t=60, b=40)
 )
 
 st.plotly_chart(fig_geo, use_container_width=True)
@@ -101,21 +102,19 @@ with col2:
     x="Balance",
     color="Exited",
     nbins=40,
+    opacity=0.75,
     barmode="overlay",
-    opacity=0.7,
     color_discrete_map={
-        0: "#2ecc71",  # green
-        1: "#e74c3c"   # red
+        0: "#27ae60",   # strong green
+        1: "#c0392b"    # strong red
     }
 )
 
 fig_balance.update_layout(
-    title="Customer Balance Distribution (Churn vs Retained)",
-    xaxis_title="Balance",
-    yaxis_title="Customer Count",
-    plot_bgcolor="white",
-    paper_bgcolor="white",
-    font=dict(size=14)
+    title="Balance Distribution: Churn vs Retained",
+    xaxis_title="Account Balance",
+    yaxis_title="Customers",
+    font=dict(size=14),
 )
 
 st.plotly_chart(fig_balance, use_container_width=True)
@@ -128,20 +127,18 @@ fig_seg = px.pie(
     names="Segment",
     values="count",
     hole=0.55,
-    color_discrete_sequence=px.colors.qualitative.Bold
+    color_discrete_sequence=[
+        "#e74c3c", "#f39c12", "#2ecc71", "#3498db"
+    ]
 )
 
 fig_seg.update_traces(
     textinfo="percent+label",
-    textfont_size=13
-)
-
-fig_seg.update_layout(
-    title="Customer Segmentation",
-    showlegend=True
+    textfont=dict(size=13)
 )
 
 st.plotly_chart(fig_seg, use_container_width=True)
+
 # ---------------- TOP RISK CUSTOMERS ----------------
 st.subheader("⚠️ High Revenue Risk Customers")
 
