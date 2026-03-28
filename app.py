@@ -1,135 +1,162 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import google.generativeai as genai
 
-# --- STEP 0: CONFIGURATION ---
-st.set_page_config(page_title="Bank Churn Intelligence", layout="wide")
+# ---------------- CONFIG ----------------
+st.set_page_config(page_title="BFSI Churn Intelligence", layout="wide")
 
-# --- STEP 1: LOAD DATA ---
+# ---------------- LOAD DATA ----------------
 @st.cache_data
 def load_data():
-    # Ensure Bank_Churn.csv is in the same folder on GitHub
     df = pd.read_csv("Bank_Churn.csv")
     return df
 
 df = load_data()
 
-# --- STEP 2: HEADER & KEY METRICS ---
-st.title("🏦 Bank Churn Intelligence AI")
-st.markdown("### Executive Retention Dashboard")
+# ---------------- FEATURE ENGINEERING ----------------
+df["CustomerValue"] = df["Balance"] * df["NumOfProducts"]
+df["EngagementScore"] = df["IsActiveMember"] * df["NumOfProducts"]
+df["RevenueRisk"] = df["Balance"] * df["Exited"]
 
-# Calculate Churn Rate
+# ---------------- HEADER ----------------
+st.title("🏦 BFSI Customer Churn Intelligence Platform")
+st.markdown("### AI-Powered Retention & Revenue Risk System")
+
+# ---------------- KPI METRICS ----------------
 total_customers = len(df)
-churned_customers = df[df['Exited'] == 1].shape[0]
-churn_rate = (churned_customers / total_customers) * 100
+churned = df["Exited"].sum()
+churn_rate = (churned / total_customers) * 100
+total_revenue_risk = df["RevenueRisk"].sum()
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 col1.metric("Total Customers", f"{total_customers:,}")
-col2.metric("Churned Customers", f"{churned_customers:,}")
-col3.metric("Churn Rate", f"{churn_rate:.2f}%", delta="-2% Target", delta_color="inverse")
+col2.metric("Churn Rate", f"{churn_rate:.2f}%")
+col3.metric("Churned Customers", f"{churned:,}")
+col4.metric("Revenue at Risk ($)", f"{total_revenue_risk:,.0f}")
 
-# --- STEP 3: VISUAL ANALYSIS ---
 st.divider()
-c1, c2 = st.columns(2)
 
-with c1:
-    st.subheader("Churn by Geography")
-    geo_churn = df.groupby('Geography')['Exited'].mean().reset_index()
-    
-    # 1. Multiply by 100 to show as percentage
-    geo_churn['Exited'] = geo_churn['Exited'] * 100 
-    
-    fig_geo = px.bar(geo_churn, x='Geography', y='Exited', 
-                     title="Churn Probability per Region (%)",
-                     text_auto='.2f',  # Shows 2 decimal places on the bar
-                     labels={'Exited': 'Churn Rate (%)'},
-                     color_discrete_sequence=['#ff4b4b'])
-    
-    # 2. Force labels to sit ON TOP of the bars for clarity
-    fig_geo.update_traces(textposition='outside', cliponaxis=False)
-    
-    # 3. Improve the hover tooltip detail
-    fig_geo.update_layout(hovermode="x unified")
-    
+# ---------------- SEGMENTATION ----------------
+st.subheader("🎯 Customer Risk Segmentation")
+
+def segment_customer(row):
+    if row["Exited"] == 1 and row["Balance"] > 100000:
+        return "High Value - High Risk"
+    elif row["Exited"] == 1:
+        return "Low Value - High Risk"
+    elif row["IsActiveMember"] == 1:
+        return "Loyal"
+    else:
+        return "At Risk"
+
+df["Segment"] = df.apply(segment_customer, axis=1)
+
+seg_counts = df["Segment"].value_counts().reset_index()
+fig_seg = px.pie(seg_counts, names="Segment", values="count",
+                 title="Customer Segmentation")
+st.plotly_chart(fig_seg, use_container_width=True)
+
+# ---------------- VISUALS ----------------
+col1, col2 = st.columns(2)
+
+with col1:
+    geo = df.groupby("Geography")["Exited"].mean().reset_index()
+    geo["Exited"] *= 100
+    fig_geo = px.bar(geo, x="Geography", y="Exited",
+                     title="Churn Rate by Geography (%)",
+                     color_discrete_sequence=["red"])
     st.plotly_chart(fig_geo, use_container_width=True)
 
-with c2:
-    st.subheader("Balance vs. Churn")
-    # Analyzing if wealthier customers are leaving
-    fig_balance = px.box(df, x='Exited', y='Balance', 
-                         title="Account Balance Distribution (Stayed vs Exited)",
-                         color='Exited',
-                         color_discrete_map={0: "green", 1: "red"})
+with col2:
+    fig_balance = px.box(df, x="Exited", y="Balance",
+                         color="Exited",
+                         title="Balance vs Churn")
     st.plotly_chart(fig_balance, use_container_width=True)
 
-import google.generativeai as genai
+# ---------------- TOP RISK CUSTOMERS ----------------
+st.subheader("⚠️ High Revenue Risk Customers")
 
-# --- STEP 4: PREDICTIVE SIDEBAR (THE VIRAL COMPONENT) ---
-st.sidebar.header("🔍 Predict Churn Risk")
-st.sidebar.markdown("Test a custom profile to see the AI's strategic advice.")
+top_risk = df[df["Exited"] == 1].sort_values(by="Balance", ascending=False).head(10)
+st.dataframe(top_risk[["CustomerId", "Balance", "Geography", "NumOfProducts"]])
 
-with st.sidebar:
-    # Creating inputs that match your Bank_Churn.csv columns
-    cs = st.slider("Credit Score", 300, 850, 650)
-    geo = st.selectbox("Geography", ["France", "Germany", "Spain"])
-    age = st.number_input("Age", 18, 100, 35)
-    tenure = st.slider("Tenure (Years)", 0, 10, 5)
-    balance = st.number_input("Account Balance ($)", value=50000)
-    products = st.selectbox("Number of Products", [1, 2, 3, 4])
-    is_active = st.radio("Is Active Member?", ["Yes", "No"])
+# ---------------- SIDEBAR INPUT ----------------
+st.sidebar.header("🔍 Customer 360 Analysis")
+
+cs = st.sidebar.slider("Credit Score", 300, 850, 650)
+geo = st.sidebar.selectbox("Geography", ["France", "Germany", "Spain"])
+age = st.sidebar.number_input("Age", 18, 100, 35)
+tenure = st.sidebar.slider("Tenure", 0, 10, 5)
+balance = st.sidebar.number_input("Balance", value=50000)
+products = st.sidebar.selectbox("Products", [1, 2, 3, 4])
+active = st.sidebar.radio("Active Member", ["Yes", "No"])
+
+analyze = st.sidebar.button("🚀 Analyze Customer")
+
+# ---------------- BUSINESS LOGIC ----------------
+def calculate_risk(balance, age, active, products):
+    active_val = 1 if active == "Yes" else 0
     
-    predict_btn = st.button("Analyze & Generate Strategy")
+    if balance > 100000 and active_val == 0:
+        return "High"
+    elif age > 45 and products <= 2:
+        return "Medium"
+    else:
+        return "Low"
 
-# --- STEP 5: THE AI "BRAIN" (GEMINI 3 FLASH) ---
-if predict_btn:
-    # Prepare the data for the AI
-    active_val = 1 if is_active == "Yes" else 0
-    
-    # Simple logic to determine "Risk Level" before sending to AI
-    # (In a real app, this is where your ML model would sit)
-    risk_score = "High" if (age > 40 and products > 2) or (balance > 100000 and active_val == 0) else "Moderate"
+# ---------------- AI ENGINE ----------------
+if analyze:
+    risk = calculate_risk(balance, age, active, products)
+    revenue_risk = balance if risk == "High" else balance * 0.5
     
     st.divider()
-    st.subheader(f"🤖 AI Strategic Analysis: {risk_score} Risk Profile")
-    
-    # Configure Gemini
+    st.subheader(f"🧠 Customer Intelligence Report ({risk} Risk)")
+
+    col1, col2 = st.columns(2)
+    col1.metric("Estimated Revenue Risk", f"${revenue_risk:,.0f}")
+    col2.metric("Risk Level", risk)
+
+    # Gemini Config
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    model = genai.GenerativeModel('gemini-2.5-flash') # Using the stable flash model
-    
+    model = genai.GenerativeModel("gemini-2.5-flash")
+
     prompt = f"""
-    You are a Senior Retention Manager at a global bank. 
-    Analyze this customer profile:
-    - Credit Score: {cs}
-    - Location: {geo}
+    You are a Senior Banking Retention Strategist.
+
+    Customer Profile:
     - Age: {age}
-    - Balance: ${balance}
+    - Geography: {geo}
+    - Balance: {balance}
     - Products: {products}
-    - Active: {is_active}
-    
-    The risk level is estimated as {risk_score}. 
+    - Active: {active}
+
+    Risk Level: {risk}
+
     Provide:
-    1. A brief explanation of WHY they might leave.
-    2. A 3-step 'Executive Retention Plan'.
-    3. A short, professional email draft to send to this customer.
+    1. Key churn drivers
+    2. Revenue impact
+    3. 3-step retention strategy
+    4. Suggested personalized offer
     """
-    
-    with st.spinner("Gemini is analyzing the risk..."):
-        response = model.generate_content(prompt)
-        st.write(response.text)
 
-# --- STEP 4: AGENTIC PREDICTION (PLACEHOLDER) ---
+    with st.spinner("Generating AI strategy..."):
+        try:
+            response = model.generate_content(prompt)
+            st.write(response.text)
+        except:
+            st.error("AI service unavailable")
+
+# ---------------- WHAT-IF SIMULATION ----------------
 st.divider()
-st.subheader("🤖 AI Risk Assessment")
-st.info("In the next update, we will integrate Gemini 3 to generate personalized retention offers for these customers.")
+st.subheader("🔮 Scenario Simulation")
 
-# --- STEP 6: PORTFOLIO & SOCIAL SHARING ---
+new_balance = st.slider("Adjust Balance", 0, 200000, 50000)
+
+sim_risk = calculate_risk(new_balance, age, active, products)
+
+st.metric("Simulated Risk Level", sim_risk)
+
+# ---------------- FOOTER ----------------
 st.sidebar.divider()
-st.sidebar.subheader("📢 Share this Insight")
-st.sidebar.info("Found an interesting risk profile? Share this tool with your network.")
-
-# Replace with your actual LinkedIn profile link
-linkedin_url = "https://www.linkedin.com/in/YOUR_PROFILE_NAME" 
-st.sidebar.link_button("🤝 Connect with the Developer", linkedin_url)
-
-# Add a "Copy Link" helper
-st.sidebar.code(f"App Link: {st.secrets.get('APP_URL', 'bank-churn-intelligence-bhavesh.streamlit.app')}")
+st.sidebar.markdown("### 💼 About")
+st.sidebar.info("AI-powered BFSI churn intelligence system for decision-makers.")
