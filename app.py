@@ -145,6 +145,88 @@ st.subheader("⚠️ High Revenue Risk Customers")
 top_risk = df[df["Exited"] == 1].sort_values(by="Balance", ascending=False).head(10)
 st.dataframe(top_risk[["CustomerId", "Balance", "Geography", "NumOfProducts"]])
 
+
+st.divider()
+st.header("🧠 AI Decision Intelligence Layer")
+
+# 1. Risk Alerts
+st.subheader("⚠️ Risk Alerts")
+# st.subheader("⚠️ Risk Alerts")
+
+high_risk_customers = df[
+    (df["Balance"] > 100000) &
+    (df["IsActiveMember"] == 0) &
+    (df["Exited"] == 1)
+]
+
+if len(high_risk_customers) > 0:
+    st.error(f"🚨 {len(high_risk_customers)} high-value customers have churned!")
+else:
+    st.success("✅ No critical churn risk detected")
+
+# 2. Top Customers to Save
+st.subheader("🔮 Top Customers to Save")
+# st.subheader("🔮 Top Customers to Save")
+
+df["ChurnProbability"] = (
+    (1 - df["IsActiveMember"]) * 0.4 +
+    (df["Balance"] / df["Balance"].max()) * 0.4 +
+    (df["NumOfProducts"] <= 2) * 0.2
+)
+
+top_save = df.sort_values(
+    by="ChurnProbability",
+    ascending=False
+).head(10)
+
+st.dataframe(
+    top_save[[
+        "CustomerId",
+        "Balance",
+        "Geography",
+        "NumOfProducts",
+        "ChurnProbability"
+    ]]
+)
+
+# 3. Ask AI
+st.subheader("🧠 Ask AI About Customer Data")
+# st.subheader("🧠 Ask AI About Customer Data")
+
+user_query = st.text_input("Ask a business question:")
+
+if user_query:
+    summary = f"""
+    Dataset Summary:
+    - Total Customers: {len(df)}
+    - Churn Rate: {round(df['Exited'].mean()*100,2)}%
+    - Avg Balance: {round(df['Balance'].mean(),2)}
+    """
+
+    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+    model = genai.GenerativeModel("gemini-2.5-flash")
+
+    prompt = f"""
+    You are a senior banking data analyst.
+
+    {summary}
+
+    User Question:
+    {user_query}
+
+    Provide:
+    - Clear business insight
+    - Data-backed reasoning
+    - Actionable recommendation
+    """
+
+    with st.spinner("Analyzing..."):
+        try:
+            response = model.generate_content(prompt)
+            st.write(response.text)
+        except:
+            st.error("AI service unavailable")
+
 # ---------------- SIDEBAR INPUT ----------------
 st.sidebar.header("🔍 Customer 360 Analysis")
 
