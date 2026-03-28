@@ -241,6 +241,9 @@ with st.expander("🔮 Scenario Analysis"):
 # ---------- USER GUIDANCE ----------
 st.info("💡 Tip: Ask business-focused questions like 'How can we reduce churn?' for better AI insights.")
 
+if st.button("Which customers are most likely to churn and why?"):
+    user_query = "Which customers are most likely to churn and why?"
+
 st.subheader("🧠 Ask AI About Customer Data")
 # st.subheader("🧠 Ask AI About Customer Data")
 
