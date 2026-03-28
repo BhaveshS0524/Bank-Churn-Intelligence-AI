@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import google.generativeai as genai
+import plotly.io as pio
+
+pio.templates.default = "plotly_white"
 
 # ---------------- CONFIG ----------------
 st.set_page_config(page_title="BFSI Churn Intelligence", layout="wide")
@@ -58,36 +61,36 @@ fig_seg = px.pie(seg_counts, names="Segment", values="count",
 st.plotly_chart(fig_seg, use_container_width=True)
 
 # ---------------- VISUALS ----------------
-# --- STEP 3: VISUAL ANALYSIS (UPGRADED) ---
-st.divider()
-c1, c2 = st.columns(2)
+geo = df.groupby("Geography")["Exited"].mean().reset_index()
+geo["Exited"] *= 100
+geo = geo.sort_values(by="Exited")
 
-# 🔥 1. Churn by Geography (Improved)
-with c1:
-    st.subheader("Churn by Geography")
+fig_geo = px.bar(
+    geo,
+    x="Exited",
+    y="Geography",
+    orientation="h",
+    text=geo["Exited"].round(1),
+    color="Exited",
+    color_continuous_scale="Reds"
+)
 
-    geo = df.groupby("Geography")["Exited"].mean().reset_index()
-    geo["Exited"] *= 100
-    geo = geo.sort_values(by="Exited", ascending=True)
+fig_geo.update_traces(
+    textposition="outside",
+    textfont_size=14
+)
 
-    fig_geo = px.bar(
-        geo,
-        x="Exited",
-        y="Geography",
-        orientation="h",
-        text=geo["Exited"].round(2),
-        title="Churn Rate by Geography (%)"
-    )
+fig_geo.update_layout(
+    title="Churn Rate by Geography (%)",
+    xaxis_title="Churn Rate (%)",
+    yaxis_title="",
+    plot_bgcolor="white",
+    paper_bgcolor="white",
+    font=dict(size=14),
+    margin=dict(l=40, r=40, t=60, b=40)
+)
 
-    fig_geo.update_traces(textposition="outside")
-
-    fig_geo.update_layout(
-        xaxis_title="Churn Rate (%)",
-        yaxis_title="",
-    )
-
-    st.plotly_chart(fig_geo, use_container_width=True)
-
+st.plotly_chart(fig_geo, use_container_width=True)
 # 🔥 2. Balance Distribution (Business-Friendly)
 with c2:
     st.subheader("Balance Distribution vs Churn")
