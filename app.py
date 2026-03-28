@@ -167,15 +167,7 @@ if user_query:
         try:
             response = model.generate_content(prompt)
             st.markdown("### 🤖 AI Insight")
-            st.write(response.text)
-            
-            # Export Section
-            c1, c2, c3 = st.columns(3)
-            with c1: st.download_button("📄 DOCX", create_enterprise_docx(response.text, user_query), "BFSI_Report.docx")
-            with c2: st.download_button("📕 PDF", create_pdf(response.text), "BFSI_Report.pdf")
-            with c3: st.download_button("📄 TXT", response.text, "BFSI_Report.txt")
-        except Exception as e:
-            st.error(f"AI error: {e}")
+           
 
 # ---------------- SIDEBAR: INDIVIDUAL 360 ANALYSIS ----------------
 st.sidebar.header("🔍 Customer 360 Analysis")
