@@ -156,26 +156,39 @@ st.divider()
 st.header("🧠 AI Decision Intelligence Layer")
 user_query = st.text_input("Ask a business question about the data (e.g., 'How to reduce churn in Germany?'):")
 
+# ---------------- ASK AI SECTION ----------------
 if user_query:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
     model = genai.GenerativeModel("gemini-2.5-flash")
     
-    summary = f"Total Customers: {len(df)}, Churn Rate: {churn_rate:.2f}%"
-    prompt = f"System: Senior Banking Analyst. Context: {summary}. Question: {user_query}. Provide business insights."
+    # Context for the AI
+    summary = f"Total Customers: {len(df)}, Churn Rate: {round(df['Exited'].mean()*100,2)}%"
+    prompt = f"System: Senior Banking Analyst. Context: {summary}. Question: {user_query}."
 
     with st.spinner("Analyzing..."):
         try:
             response = model.generate_content(prompt)
-            st.markdown("### 🤖 AI Insight")
-            st.write(response.text)
+            report_text = response.text  # Save the text to a variable first
             
-            # Export Section
-            c1, c2, c3 = st.columns(3)
-            with c1: st.download_button("📄 DOCX", create_enterprise_docx(response.text, user_query), "BFSI_Report.docx")
-            with c2: st.download_button("📕 PDF", create_pdf(response.text), "BFSI_Report.pdf")
-            with c3: st.download_button("📄 TXT", response.text, "BFSI_Report.txt")
+            st.markdown("### 🤖 AI Insight")
+            st.write(report_text)
+            
+            st.divider()
+            st.subheader("📥 Export Strategic Report")
+            
+            # Create the PDF in memory
+            pdf_data = create_pdf(report_text)
+            
+            # The Download Button
+            st.download_button(
+                label="📕 Download PDF Report",
+                data=pdf_data,
+                file_name="BFSI_Churn_Analysis.pdf",
+                mime="application/pdf"
+            )
+            
         except Exception as e:
-            st.error(f"AI error: {e}")
+            st.error(f"AI service unavailable: {e}")
 
 # ---------------- SIDEBAR: INDIVIDUAL 360 ANALYSIS ----------------
 st.sidebar.header("🔍 Customer 360 Analysis")
