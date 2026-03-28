@@ -250,7 +250,51 @@ st.info("💡 Tip: Ask business-focused questions like 'How can we reduce churn?
 if st.button("Which customers are most likely to churn and why?"):
     user_query = "Which customers are most likely to churn and why?"
 
+# ---------------- AI FUNCTIONS (TOP OF FILE) ----------------
+
+def create_enterprise_docx(report_text, user_query):
+    doc = Document()
+
+    doc.add_heading("BFSI Customer Churn Intelligence Report", 0)
+    doc.add_paragraph("AI-Powered Strategic Analysis\n")
+
+    doc.add_heading("User Query", level=1)
+    doc.add_paragraph(user_query)
+
+    doc.add_heading("Insights", level=1)
+    doc.add_paragraph(report_text)
+
+    doc.add_heading("Recommended Actions", level=1)
+    doc.add_paragraph(
+        "- Prioritize high-value customers\n"
+        "- Improve engagement\n"
+        "- Reduce churn risk"
+    )
+
+    buffer = BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
+def create_pdf(report_text):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer)
+    styles = getSampleStyleSheet()
+
+    content = []
+    content.append(Paragraph("BFSI Customer Churn Intelligence Report", styles["Title"]))
+    content.append(Paragraph("<br/>", styles["Normal"]))
+    content.append(Paragraph(report_text, styles["Normal"]))
+
+    doc.build(content)
+    buffer.seek(0)
+    return buffer
+
+
 # ---------------- ASK AI ----------------
+
+st.divider()
 st.subheader("🧠 Ask AI About Customer Data")
 
 user_query = st.text_input("Ask a business question:")
@@ -271,101 +315,69 @@ if user_query:
 
     {summary}
 
-    User Question:
-    {user_query}
+    Question: {user_query}
 
-    Provide:
-    - Clear business insight
-    - Data-backed reasoning
-    - Actionable recommendation
+    Provide business insights and actionable recommendations.
     """
 
     with st.spinner("Analyzing..."):
         try:
             response = model.generate_content(prompt)
 
-            # ✅ Show AI response
+            # ✅ SHOW OUTPUT
             st.markdown("### 🤖 AI Insight")
             st.write(response.text)
 
-            # ---------------- DOWNLOAD SECTION ----------------
-            
+            # ✅ EXPORT SECTION
+            st.markdown("### 📥 Export Report")
 
-            with st.spinner("Generating AI strategy..."):
-    try:
-        response = model.generate_content(prompt)
+            docx_file = create_enterprise_docx(response.text, user_query)
+            pdf_file = create_pdf(response.text)
 
-        # ✅ SHOW OUTPUT
-        st.markdown("### 🤖 AI Retention Strategy")
-        st.write(response.text)
+            col1, col2, col3 = st.columns(3)
 
-        # ✅ IMPORTS MUST BE INSIDE OR AT TOP
-        from docx import Document
-        from io import BytesIO
-        from reportlab.platypus import SimpleDocTemplate, Paragraph
-        from reportlab.lib.styles import getSampleStyleSheet
+            with col1:
+                st.download_button(
+                    "📄 DOCX",
+                    docx_file,
+                    file_name="BFSI_Report.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                )
 
-        # ---------------- DOCX FUNCTION ----------------
-        def create_docx(report_text):
-            doc = Document()
-            doc.add_heading("Customer Churn Intelligence Report", 0)
-            doc.add_paragraph(report_text)
+            with col2:
+                st.download_button(
+                    "📕 PDF",
+                    pdf_file,
+                    file_name="BFSI_Report.pdf",
+                    mime="application/pdf"
+                )
 
-            buffer = BytesIO()
-            doc.save(buffer)
-            buffer.seek(0)
-            return buffer
+            with col3:
+                st.download_button(
+                    "📄 TXT",
+                    response.text,
+                    file_name="BFSI_Report.txt"
+                )
 
-        # ---------------- PDF FUNCTION ----------------
-        def create_pdf(report_text):
-            buffer = BytesIO()
-            doc = SimpleDocTemplate(buffer)
-            styles = getSampleStyleSheet()
+            # ✅ EMAIL COPY
+            st.markdown("### ✉️ Email Draft")
 
-            content = []
-            content.append(Paragraph("Customer Churn Intelligence Report", styles["Title"]))
-            content.append(Paragraph("<br/>", styles["Normal"]))
-            content.append(Paragraph(report_text, styles["Normal"]))
+            email_text = f"""
+Subject: Customer Churn Analysis
 
-            doc.build(content)
-            buffer.seek(0)
-            return buffer
+Dear Team,
 
-        # ✅ GENERATE FILES
-        docx_file = create_docx(response.text)
-        pdf_file = create_pdf(response.text)
+{response.text}
 
-        # ---------------- DOWNLOAD BUTTONS ----------------
-        st.markdown("### 📥 Export Report")
+Regards,
+Churn Intelligence Platform
+"""
 
-        col1, col2, col3 = st.columns(3)
+            st.text_area("Copy Email", email_text, height=200)
 
-        with col1:
-            st.download_button(
-                "📄 DOCX",
-                docx_file,
-                file_name="customer_strategy.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            )
-
-        with col2:
-            st.download_button(
-                "📕 PDF",
-                pdf_file,
-                file_name="customer_strategy.pdf",
-                mime="application/pdf"
-            )
-
-        with col3:
-            st.download_button(
-                "📄 TXT",
-                response.text,
-                file_name="customer_strategy.txt"
-            )
-
-    except Exception as e:
-        st.error(f"AI service unavailable: {e}")
-
+        except Exception as e:
+            st.error(f"AI service unavailable: {e}")
+st.write(response.text)
 # ---------------- SIDEBAR INPUT ----------------
 st.sidebar.header("🔍 Customer 360 Analysis")
 
@@ -433,151 +445,6 @@ if analyze:
             st.error("AI service unavailable")
 
 st.write(response.text)
-
-# ---------------- ASK AI ----------------
-st.subheader("🧠 Ask AI About Customer Data")
-
-user_query = st.text_input("Ask a business question:")
-
-if user_query:
-    summary = f"""
-    Dataset Summary:
-    - Total Customers: {len(df)}
-    - Churn Rate: {round(df['Exited'].mean()*100,2)}%
-    - Avg Balance: {round(df['Balance'].mean(),2)}
-    """
-
-    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    model = genai.GenerativeModel("gemini-2.5-flash")
-
-    prompt = f"""
-    You are a senior banking data analyst.
-
-    {summary}
-
-    User Question:
-    {user_query}
-
-    Provide:
-    - Clear business insight
-    - Data-backed reasoning
-    - Actionable recommendation
-    """
-
-    with st.spinner("Analyzing..."):
-        try:
-            response = model.generate_content(prompt)
-
-            # ✅ Show AI response
-            st.markdown("### 🤖 AI Insight")
-            st.write(response.text)
-
-            # ---------------- DOWNLOAD SECTION ----------------
-            from docx import Document
-            from io import BytesIO
-
-            from docx import Document
-from io import BytesIO
-
-def create_enterprise_docx(report_text, user_query):
-    doc = Document()
-
-    # Title
-    doc.add_heading("BFSI Customer Churn Intelligence Report", 0)
-
-    # Subtitle
-    doc.add_paragraph("AI-Powered Strategic Analysis for Banking Decision Makers\n")
-
-    # Query
-    doc.add_heading("User Query", level=1)
-    doc.add_paragraph(user_query)
-
-    # AI Insights
-    doc.add_heading("AI-Generated Insights", level=1)
-    doc.add_paragraph(report_text)
-
-    # Recommendations section
-    doc.add_heading("Recommended Actions", level=1)
-    doc.add_paragraph(
-        "- Prioritize high-value customers\n"
-        "- Improve engagement strategies\n"
-        "- Monitor churn-prone segments"
-    )
-
-    # Footer
-    doc.add_paragraph("\nGenerated using AI Churn Intelligence Platform")
-
-    buffer = BytesIO()
-    doc.save(buffer)
-    buffer.seek(0)
-
-    return buffer
-
-
-def create_pdf(report_text):
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer)
-    styles = getSampleStyleSheet()
-
-    content = []
-
-    content.append(Paragraph("BFSI Customer Churn Intelligence Report", styles["Title"]))
-    content.append(Paragraph("<br/>", styles["Normal"]))
-    content.append(Paragraph(report_text, styles["Normal"]))
-
-    doc.build(content)
-    buffer.seek(0)
-
-    return buffer
-
-# ---------------- EXPORT SECTION ----------------
-
-st.markdown("### 📥 Export Enterprise Report")
-
-docx_file = create_enterprise_docx(response.text, user_query)
-pdf_file = create_pdf(response.text)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.download_button(
-        "📄 Download DOCX",
-        docx_file,
-        file_name="BFSI_Churn_Report.docx",
-        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
-
-with col2:
-    st.download_button(
-        "📕 Download PDF",
-        pdf_file,
-        file_name="BFSI_Churn_Report.pdf",
-        mime="application/pdf"
-    )
-
-with col3:
-    st.download_button(
-        "📄 Download TXT",
-        response.text,
-        file_name="BFSI_Report.txt"
-    )
-
-st.markdown("### ✉️ Copy for Email")
-
-email_text = f"""
-Subject: Customer Churn Risk Analysis
-
-Dear Team,
-
-Please find below the key insights:
-
-{response.text}
-
-Regards,  
-Churn Intelligence System
-"""
-
-st.text_area("Email Draft", email_text, height=200)
 
 # ---------------- WHAT-IF SIMULATION ----------------
 st.divider()
