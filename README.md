@@ -30,7 +30,26 @@ By integrating **Gemini 2.5 Flash**, the system analyzes 10,000+ customer record
 3.  **Intelligence Layer:** Orchestrates prompts to Gemini 2.5 Flash for strategic analysis.
 4.  **Presentation Layer:** Renders real-time Plotly visuals and handles asynchronous document generation.
 
+## Install dependencies:
+pip install -r requirements.txt
 
+## Set up Secrets:
+Create a .streamlit/secrets.toml file and add your API key:
+
+Ini, TOML
+
+GOOGLE_API_KEY = "your_gemini_api_key_here"
+Run the App:
+streamlit run app.py
+
+## 📈 Business Impact
+**Efficiency:** Reduces the time for a Senior Analyst to create a retention report from 4 hours to 4 seconds.
+
+**Proactive Retention:** Identifies high-value "At Risk" customers before they move their capital.
+
+**Scalability:** The architecture is designed to handle enterprise-level datasets with minimal latency thanks to the Flash 2.5 model.
+
+**Developed by Bhavesh | Connect on [LinkedIn](https://www.linkedin.com/in/bhaveshsuryavanshi/)**
 
 ## ⚡ Quick Start
 1. **Clone the repository:**
