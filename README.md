@@ -1,7 +1,6 @@
-# Bank Churn Intelligence AI - README Generator
+# Bank Churn Intelligence AI
 # Designed By: Bhavesh Suryavanshi (AI Solutions Consultant)
 
-cat << 'EOF' > README.md
 # 📉 Bank Churn Intelligence AI: Predictive Retention Orchestrator
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
