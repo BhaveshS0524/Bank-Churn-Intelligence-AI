@@ -166,10 +166,6 @@ st.dataframe(
     ]]
 )
 
-st.subheader("🧠 Ask AI About Customer Data")
-
-user_query = st.text_input("Ask a business question:")
-
 if user_query:
     summary = f"""
     Dataset Summary:
