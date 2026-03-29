@@ -166,37 +166,6 @@ st.dataframe(
     ]]
 )
 
-if user_query:
-    summary = f"""
-    Dataset Summary:
-    - Total Customers: {len(df)}
-    - Churn Rate: {round(df['Exited'].mean()*100,2)}%
-    - Avg Balance: {round(df['Balance'].mean(),2)}
-    """
-
-    genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    model = genai.GenerativeModel("gemini-2.5-flash")
-
-    prompt = f"""
-    You are a senior banking data analyst.
-
-    {summary}
-
-    User Question:
-    {user_query}
-
-    Provide:
-    - Clear business insight
-    - Data-backed reasoning
-    - Actionable recommendation
-    """
-
-    with st.spinner("Analyzing..."):
-        try:
-            response = model.generate_content(prompt)
-            st.write(response.text)
-        except:
-            st.error("AI service unavailable")
 
 # ---------- BUSINESS INSIGHTS ----------
 with st.expander("📊 Business Insights"):
