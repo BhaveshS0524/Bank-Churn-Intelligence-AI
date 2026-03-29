@@ -13,33 +13,37 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from sklearn.preprocessing import StandardScaler
 
-# 1. Prepare your data (Features: Age, Balance, Credit Score, Velocity)
-# Assuming 'X' is your feature matrix and 'y' is the churn target (0 or 1)
+# --- 1. DATA PREPARATION ---
+@st.cache_data
+def load_data():
+    df = pd.read_csv("Bank_Churn.csv")
+    # We select the features for the Neural Network
+    # CreditScore, Age, Tenure, Balance, NumOfProducts, HasCrCard, IsActiveMember, EstimatedSalary
+    X = df[['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'HasCrCard', 'IsActiveMember', 'EstimatedSalary']]
+    y = df['Exited'] # The target (Churn)
+    return df, X, y
+
+# Load the data first so 'X' is defined
+df, X, y = load_data()
+
+# --- 2. THE DEEP LEARNING ENGINE ---
+# Now 'X' exists, so we can scale it
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# 2. Build the Deep Neural Network (ANN)
-model = Sequential([
-    # Input Layer + First Hidden Layer (16 neurons)
+# Build the Sequential ANN
+# 
+ann_model = Sequential([
     Dense(16, activation='relu', input_shape=(X_scaled.shape[1],)),
-    Dropout(0.2), # Prevents "Overfitting" - critical for banking data
-    
-    # Second Hidden Layer (8 neurons)
+    Dropout(0.2), # Dropout layer to prevent overfitting on banking data
     Dense(8, activation='relu'),
-    
-    # Output Layer (Sigmoid for Probability 0 to 1)
-    Dense(1, activation='sigmoid')
+    Dense(1, activation='sigmoid') # Sigmoid for churn probability (0 to 1)
 ])
 
-# 3. Compile the "Deep Engine"
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+ann_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# 4. Train the AI (This is where the 'Learning' happens)
-# In your app, you would load pre-trained weights for speed
-model.fit(X_scaled, y, epochs=50, batch_size=32, verbose=0)
-
-# 5. Get the "Deep Churn Score"
-churn_probability = model.predict(new_customer_data_scaled)
+# We use a small epoch for the live demo to keep it fast
+ann_model.fit(X_scaled, y, epochs=10, batch_size=32, verbose=0)
 
 # ---------------- 1. FUNCTIONS FIRST (Prevents Indentation Errors) ----------------
 def create_pdf(report_text):
