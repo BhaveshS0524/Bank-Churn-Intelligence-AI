@@ -109,7 +109,7 @@ with col1:
                      text=geo["Exited"].round(1), color="Exited",
                      color_continuous_scale="RdPu")
     fig_geo.update_traces(textposition="outside")
-    st.plotly_chart(fig_geo, width=True)
+    st.plotly_chart(fig_geo, use_container_width=True)
 
 with col2:
     st.subheader("Customer Segmentation")
