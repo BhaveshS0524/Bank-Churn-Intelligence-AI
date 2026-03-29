@@ -109,7 +109,7 @@ with col1:
                      text=geo["Exited"].round(1), color="Exited",
                      color_continuous_scale="RdPu")
     fig_geo.update_traces(textposition="outside")
-    st.plotly_chart(fig_geo, use_container_width=True)
+    st.plotly_chart(fig_geo, width=True)
 
 with col2:
     st.subheader("Customer Segmentation")
@@ -255,7 +255,7 @@ user_query = st.text_input("Ask a business question about the data (e.g., 'How t
 
 if user_query:
     genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     
     prompt = f"Context: Churn is {df['Exited'].mean()*100:.2f}%. Question: {user_query}"
 
