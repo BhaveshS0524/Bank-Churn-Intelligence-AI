@@ -1,57 +1,68 @@
-# 🏦 BFSI Customer Churn Intelligence Platform
-### **Predictive Analytics & Agentic AI Strategy Orchestrator**
+# Bank Churn Intelligence AI - README Generator
+# Designed By: Bhavesh Suryavanshi (AI Solutions Consultant)
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_svg.svg)](https://bank-churn-intelligence-bhavesh.streamlit.app/)
+cat << 'EOF' > README.md
+# 📉 Bank Churn Intelligence AI: Predictive Retention Orchestrator
 
-## 📖 Overview
-This platform is a **Decision Intelligence** solution designed for the Banking and Financial Services (BFSI) sector. While traditional dashboards only show historical churn, this engine uses **Agentic AI** to simulate future risk and prescribe immediate retention actions.
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://bank-churn-intelligence-ai-bhavesh.streamlit.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-By integrating **Gemini 2.5 Flash**, the system analyzes 10,000+ customer records to identify "Revenue at Risk" and generates boardroom-ready executive reports in seconds.
+**Bank Churn Intelligence AI** is an advanced behavioral analytics engine designed to combat "Silent Churn" in the banking sector. By integrating **Agentic AI reasoning** with customer transaction patterns, the platform predicts which customers are likely to leave and generates automated, hyper-personalized retention strategies.
 
+## 🎯 Executive Summary
+Customer acquisition costs in banking are 5x higher than retention costs. This platform solves the "Reactive Trap" where banks only realize a customer has left after the account is closed. 
 
+* **Behavioral Telemetry:** Real-time monitoring of balance velocity, product depth, and engagement latency.
+* **Predictive Risk Scoring:** 0-100 Propensity scores using Random Forest and Gemini 1.5 Flash.
+* **Agentic Retention Desk:** Automated generation of win-back offers and root-cause analysis for high-risk segments.
 
-## 🚀 Key Features
-* **Agentic Risk Reasoning:** Uses LLM-based reasoning to explain *why* specific segments (e.g., high-balance inactive users in Germany) are exiting.
-* **360° Customer Simulator:** A sidebar-driven "What-If" tool for managers to test churn probability based on Credit Score, Age, and Product Engagement.
-* **Automated Strategy Orchestration:** Generates personalized 3-step retention plans and professional email drafts for high-value clients.
-* **Enterprise Export Ops:** Built-in PDF and DOCX generation to convert AI insights into portable, well-formatted business documents.
-* **Interactive Geospatial Analytics:** Visualizes churn density across international markets to identify regional systemic risks.
+## 🏗️ Technical Architecture
+* **Frontend:** Streamlit (Custom 2026 UI Standards)
+* **Intelligence Layer:** Google Gemini 1.5 Flash (Behavioral Synthesis)
+* **Data Science:** Scikit-Learn, Pandas, NumPy
+* **Visualization:** Plotly (Interactive Churn Cohorts)
 
-## 🛠️ Tech Stack
-* **Language:** Python 3.10+
-* **AI Engine:** Google Gemini 2.5 Flash (Generative AI SDK)
-* **Frontend:** Streamlit (Mobile-Responsive UI)
-* **Data Science:** Pandas, NumPy, Plotly Express
-* **Document Engineering:** ReportLab (PDF), python-docx (Word), IO (Memory Buffer)
+## 🧠 Strategic Churn Intelligence Methodology
 
-## 🏗️ Architecture
-1.  **Data Layer:** Ingests raw bank telemetry data (CSV/SQL).
-2.  **Logic Layer:** Performs feature engineering to calculate `RevenueRisk` and `EngagementScore`.
-3.  **Intelligence Layer:** Orchestrates prompts to Gemini 2.5 Flash for strategic analysis.
-4.  **Presentation Layer:** Renders real-time Plotly visuals and handles asynchronous document generation.
+### 1. Feature Engineering & Behavioral Triggers
+The engine analyzes "Digital Exhaust" to identify high-risk segments:
+* **Balance Velocity:** Month-on-Month drops in average balance > 20% trigger a "Capital Outflow" alert.
+* **Product Depth:** Identifies "Single-Product" customers who lack the "stickiness" of multi-service users.
+* **Engagement Latency:** Detects shifts in login frequency from "Daily" to "Monthly" as a leading churn indicator.
 
-## Install dependencies:
+### 2. Predictive Risk Scoring
+The system classifies customers into three actionable tiers:
+* **0-30 (Green):** Loyal/Stable. Strategy: Cross-sell Wealth Management products.
+* **31-70 (Amber):** At-Risk. Strategy: Targeted engagement rewards and fee waivers.
+* **71-100 (Red):** Critical Churn. Strategy: Immediate Relationship Manager (RM) intervention.
+
+### 3. Agentic Retention Strategy
+The AI acts as a virtual Retention Manager, providing:
+* **Root Cause Analysis:** (e.g., "Customer sensitive to competitor interest rates").
+* **Personalized Interventions:** Automated drafting of retention emails and special FD rate offers.
+
+## 🛠️ Installation & Deployment
+# Clone the repository
+git clone https://github.com/BhaveshS0524/bank-churn-intelligence-ai.git
+
+# Install dependencies
 pip install -r requirements.txt
 
-## Set up Secrets:
-Create a .streamlit/secrets.toml file and add your API key:
+# Configure Environment Variables in .streamlit/secrets.toml:
+GOOGLE_API_KEY = "YOUR_API_KEY"
 
-Ini, TOML
+# Launch the orchestrator
+streamlit run codeapp.py
+\`\`\`
 
-GOOGLE_API_KEY = "your_gemini_api_key_here"
-Run the App:
-streamlit run app.py
+## 👨‍💻 Author
+**Bhavesh Suryavanshi**
+*AI Solutions Consultant | BFSI Specialist*
+[LinkedIn Profile](https://www.linkedin.com/in/bhavesh-suryavanshi-89596043/)
 
-## 📈 Business Impact
-**Efficiency:** Reduces the time for a Senior Analyst to create a retention report from 4 hours to 4 seconds.
+---
+*Disclaimer: This tool is a decision-support prototype. Final retention actions should be governed by institutional compliance and marketing guidelines.*
+EOF
 
-**Proactive Retention:** Identifies high-value "At Risk" customers before they move their capital.
-
-**Scalability:** The architecture is designed to handle enterprise-level datasets with minimal latency thanks to the Flash 2.5 model.
-
-**Developed by Bhavesh Suryavanshi | Connect on [LinkedIn](https://www.linkedin.com/in/bhaveshsuryavanshi/)**
-
-## ⚡ Quick Start
-1. **Clone the repository:**
-
-git clone [https://github.com/BhaveshS0524/bank-churn-intelligence-ai.git](https://github.com/BhaveshS0524/bank-churn-intelligence-ai.git)
+echo "✅ Bank Churn README.md has been generated successfully!"
