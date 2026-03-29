@@ -10,7 +10,7 @@ from io import BytesIO
 import re
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.layers import Input, Dense, Dropout
 from sklearn.preprocessing import StandardScaler
 
 # --- 1. DATA PREPARATION ---
@@ -34,12 +34,12 @@ X_scaled = scaler.fit_transform(X)
 # Build the Sequential ANN
 # 
 ann_model = Sequential([
-    Dense(16, activation='relu', input_shape=(X_scaled.shape[1],)),
-    Dropout(0.2), # Dropout layer to prevent overfitting on banking data
+    Input(shape=(X_scaled.shape[1],)), # New modern way to define input
+    Dense(16, activation='relu'),
+    Dropout(0.2), 
     Dense(8, activation='relu'),
-    Dense(1, activation='sigmoid') # Sigmoid for churn probability (0 to 1)
+    Dense(1, activation='sigmoid')
 ])
-
 ann_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 # We use a small epoch for the live demo to keep it fast
