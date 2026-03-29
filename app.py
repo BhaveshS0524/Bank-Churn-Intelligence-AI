@@ -8,6 +8,38 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 from io import BytesIO
 import re
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from sklearn.preprocessing import StandardScaler
+
+# 1. Prepare your data (Features: Age, Balance, Credit Score, Velocity)
+# Assuming 'X' is your feature matrix and 'y' is the churn target (0 or 1)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 2. Build the Deep Neural Network (ANN)
+model = Sequential([
+    # Input Layer + First Hidden Layer (16 neurons)
+    Dense(16, activation='relu', input_shape=(X_scaled.shape[1],)),
+    Dropout(0.2), # Prevents "Overfitting" - critical for banking data
+    
+    # Second Hidden Layer (8 neurons)
+    Dense(8, activation='relu'),
+    
+    # Output Layer (Sigmoid for Probability 0 to 1)
+    Dense(1, activation='sigmoid')
+])
+
+# 3. Compile the "Deep Engine"
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# 4. Train the AI (This is where the 'Learning' happens)
+# In your app, you would load pre-trained weights for speed
+model.fit(X_scaled, y, epochs=50, batch_size=32, verbose=0)
+
+# 5. Get the "Deep Churn Score"
+churn_probability = model.predict(new_customer_data_scaled)
 
 # ---------------- 1. FUNCTIONS FIRST (Prevents Indentation Errors) ----------------
 def create_pdf(report_text):
@@ -73,13 +105,17 @@ def calculate_risk(balance, age, active, products):
 # ---------------- DATA LOADING ----------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("Bank_Churn.csv")
-    # Feature Engineering
+    # This finds the folder where your app.py is located
+    base_path = os.path.dirname(__file__)
+    file_path = os.path.join(base_path, "Bank_Churn.csv")
+    
+    if not os.path.exists(file_path):
+        st.error(f"File not found: {file_path}. Please check your GitHub upload.")
+        return pd.DataFrame() # Returns empty so the app doesn't crash completely
+        
+    df = pd.read_csv(file_path)
     df["RevenueRisk"] = df["Balance"] * df["Exited"]
     return df
-
-df = load_data()
-
 # ---------------- HEADER ----------------
 st.title("🏦 BFSI Customer Churn Intelligence Platform")
 st.markdown("### AI-Powered Retention & Revenue Risk System")
