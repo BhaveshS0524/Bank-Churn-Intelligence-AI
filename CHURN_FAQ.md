@@ -21,13 +21,10 @@ This document outlines the predictive logic and operational framework of the **B
 3. Increased "Outward Remittance" to known competitor financial institutions.
 
 ### 🛡️ Q4: Can the AI handle unstructured data like Customer Support logs?
-**A:** Yes. Because we utilize the **Gemini 1.5 Flash** model, the system can ingest "Sentiment Data" from recent support tickets or chat transcripts. If a customer recently complained about a technical error and *then* reduced their balance, the Churn Score is automatically escalated to "Critical."
+**A:** Yes. Because we utilize the **Gemini 2.5 Flash** model, the system can ingest "Sentiment Data" from recent support tickets or chat transcripts. If a customer recently complained about a technical error and *then* reduced their balance, the Churn Score is automatically escalated to "Critical."
 
 ### 🌪️ Q5: What is the "Product Depth" theory in your retention logic?
 **A:** Statistical analysis shows that "Product Depth" is the strongest deterrent to churn. A customer with a Savings Account + Credit Card + Personal Loan has a 90% lower churn probability than a Savings-only customer. Our AI specifically recommends "Cross-Sell" opportunities as a primary retention tactic.
 
 ---
 **Designed By:** Bhavesh Suryavanshi | *AI Solutions Consultant*
-EOF
-
-echo "✅ CHURN_FAQ.md has been generated for your Bank Churn project!"
