@@ -1,7 +1,7 @@
-streamlit
-pandas
-plotly
-google-generativeai
-reportlab
-python-docx
-scikit-learn
+streamlit>=1.31.0
+pandas>=2.1.0
+numpy>=1.26.0
+plotly>=5.18.0
+scikit-learn>=1.3.0
+google-generativeai>=0.3.0
+reportlab>=4.0.0
