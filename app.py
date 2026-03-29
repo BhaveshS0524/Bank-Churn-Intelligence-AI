@@ -128,7 +128,6 @@ with col2:
 # ---------------- AI DECISION LAYER (ASK AI) ----------------
 
 st.divider()
-st.header("❓ Frequently Asked Questions (Ask AI)")
 
 st.subheader("⚠️ Risk Alerts")
 
@@ -168,6 +167,8 @@ st.dataframe(
 
 
 # ---------- BUSINESS INSIGHTS ----------
+st.header("❓ Frequently Asked Questions (Ask AI)")
+
 with st.expander("📊 Business Insights"):
     st.markdown("""
 - Which customers are most likely to churn and why?
