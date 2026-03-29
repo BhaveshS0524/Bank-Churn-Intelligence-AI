@@ -124,19 +124,21 @@ def load_data():
 st.title("🏦 BFSI Customer Churn Intelligence Platform")
 st.markdown("### AI-Powered Retention & Revenue Risk System")
 
-# ---------------- KPI METRICS ----------------
+# ---------------- KPI CALCULATIONS ----------------
 total_customers = len(df)
-churned = df["Exited"].sum()
-churn_rate = (churned / total_customers) * 100
-total_revenue_risk = df["RevenueRisk"].sum()
+churned_df = df[df["Exited"] == 1]
+churned_count = len(churned_df)
+churn_rate = (churned_count / total_customers) * 100
 
+# Revenue Risk is the total balance of customers who have already exited
+total_revenue_risk = churned_df["Balance"].sum() 
+
+# ---------------- DISPLAY METRICS ----------------
 m1, m2, m3, m4 = st.columns(4)
 m1.metric("Total Customers", f"{total_customers:,}")
-m2.metric("Churn Rate", f"{churn_rate:.2f}%")
-m3.metric("Churned Customers", f"{churned:,}")
-m4.metric("Revenue at Risk ($)", f"{total_revenue_risk:,.0f}")
-
-st.divider()
+m2.metric("Churn Rate", f"{churn_rate:.1f}%")
+m3.metric("Revenue at Risk", f"${total_revenue_risk:,.0f}")
+m4.metric("Avg Score", f"{df['CreditScore'].mean():.0f}")
 
 # ---------------- GLOBAL VISUALS ----------------
 col1, col2 = st.columns(2)
