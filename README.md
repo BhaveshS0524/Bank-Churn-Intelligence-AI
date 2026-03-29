@@ -62,6 +62,3 @@ streamlit run app.py
 
 ---
 *Disclaimer: This tool is a decision-support prototype. Final retention actions should be governed by institutional compliance and marketing guidelines.*
-EOF
-
-echo "✅ Bank Churn README.md has been generated successfully!"
