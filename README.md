@@ -52,7 +52,7 @@ pip install -r requirements.txt
 GOOGLE_API_KEY = "YOUR_API_KEY"
 
 # Launch the orchestrator
-streamlit run codeapp.py
+streamlit run app.py
 \`\`\`
 
 ## 👨‍💻 Author
